@@ -1,4 +1,4 @@
-# ETL Orchestrated estimation of a future prices
+# ETL Orchestrated estimation of future prices
 
 End-to-end crypto forecasting project with:
 - an ETL and training pipeline,
