@@ -5,7 +5,8 @@ End-to-end crypto forecasting project with:
 - a FastAPI backend,
 - a React frontend,
 - PostgreSQL,
-- and Airflow orchestration.
+- Airflow orchestration,
+- and Docker containerization.
 
 The pipeline fetches BTC/USD market data, updates the database, trains an XGBoost model, and exposes the latest prediction through the API.
 
