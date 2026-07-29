@@ -1,6 +1,6 @@
 # ETL Orchestrated estimation of future prices
 
-End-to-end crypto forecasting project with:
+End-to-end assets forecasting project with:
 - an ETL and training pipeline,
 - a FastAPI backend,
 - a React frontend,
@@ -8,12 +8,12 @@ End-to-end crypto forecasting project with:
 - Airflow orchestration,
 - and Docker containerization.
 
-The pipeline fetches BTC/USD market data, updates the database, trains an XGBoost model, and exposes the latest prediction through the API.
+The pipeline fetches market data (assets pricing), updates the database, trains an XGBoost model, and exposes the latest prediction through the API.
 
 ## Architecture
 
 1. **ETL + Training (`etl/`)**
-   - Fetches new BTC/USD data.
+   - Fetches new market data.
    - Stores parquet files in `data_lake/`.
    - Updates PostgreSQL.
    - Trains model and saves artifacts in `shared_models/`.
