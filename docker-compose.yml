@@ -72,6 +72,21 @@ services:
       # The API URL for React to make its fetch(), needed for REACTs requests
       REACT_APP_API_URL: ${REACT_APP_API_URL}
 
+  # DD: new service, one Agent for everything
+  datadog-agent:
+    image: gcr.io/datadoghq/agent:7
+    environment:
+      - DD_API_KEY=${DD_API_KEY}
+      - DD_SITE=${DD_SITE}
+      - DD_APM_ENABLED=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+
   # --- INFRASTRUCTURE AIRFLOW (DÉBUT) ---s
 
   # 1. Base de données dédiée à Airflow (Isolation = Bonne pratique)
