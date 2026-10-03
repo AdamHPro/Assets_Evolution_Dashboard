@@ -23,7 +23,7 @@ services:
       db:
         condition: service_healthy
     working_dir: /app
-    command: ["python", "-m", "src.main"]
+    command: ["ddtrace-run", "python", "-m", "src.main"]
     volumes:
       #To dev without relaunch
       - ./etl:/app
@@ -40,12 +40,18 @@ services:
       DB_PASS: ${DB_PASS}
       # Path to store data lake files
       DATA_LAKE_PATH: /app/data_lake/btc_usd
+      # DD
+      DD_AGENT_HOST: datadog-agent
+      DD_SERVICE: btc-etl
+      DD_ENV: local
+      DD_LOGS_INJECTION: "true"
 
   #Fastapi service
   api:
     build: ./api
     ports:
       - "8000:8000"
+    command: ["ddtrace-run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
     volumes:
       #Hot-reload of the backend
       - ./api:/app
@@ -58,6 +64,11 @@ services:
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
       BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS}
+      # DD
+      DD_AGENT_HOST: datadog-agent
+      DD_SERVICE: btc-api
+      DD_ENV: local
+      DD_LOGS_INJECTION: "true"
 
   #Frontend React
   front:
@@ -75,17 +86,22 @@ services:
   # DD: new service, one Agent for everything
   datadog-agent:
     image: gcr.io/datadoghq/agent:7
+    container_name: dd-agent
     environment:
       - DD_API_KEY=${DD_API_KEY}
-      - DD_SITE=${DD_SITE}
+      - DD_SITE=${DD_SITE}                    # us5.datadoghq.com
+      - DD_ENV=dev
       - DD_APM_ENABLED=true
       - DD_APM_NON_LOCAL_TRAFFIC=true
       - DD_LOGS_ENABLED=true
       - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION=true
+      - DD_CONTAINER_EXCLUDE_LOGS=name:dd-agent
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
 
   # --- INFRASTRUCTURE AIRFLOW (DÉBUT) ---s
 
